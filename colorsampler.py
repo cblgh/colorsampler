@@ -29,11 +29,12 @@ class Colorsampler(QWidget):
         self.setLayout(hbox)
 
         self.colorLabel = QLabel(self)
-        self.colorLabel.resize(20, 40)
+        self.labelHeight = 40
+        self.labelWidth = 20
+        self.colorLabel.resize(self.labelWidth, self.labelHeight)
         self.complementLabel = QLabel(self)
-        self.complementLabel.resize(20, 40)
+        self.complementLabel.resize(self.labelWidth, self.labelHeight)
         
-        # self.desktopX to handle multiscreen environments
         self.setWindowTitle('Colorsampler')
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.showFullScreen()
@@ -48,66 +49,68 @@ class Colorsampler(QWidget):
                 pos = event.pos()
                 width = self.image.size().width()
                 height = self.image.size().height()
-                x = event.globalX()
-                y = event.globalY()
+                mouseX = event.globalX()
+                mouseY = event.globalY()
+                offsetY = 30
 
                 # if cursor is in the bottom right corner
-                if  x - self.desktopX >= width - 61 and y >= height - 71:
-                    self.colorLabel.move(width - 40, height - 40)
-                    self.complementLabel.move(width - 20, height - 40)
-                    pass
-                elif x - self.desktopX >= width - 61:
-                    self.colorLabel.move(width - 40, y + 30)
-                    self.complementLabel.move(width - 20, y + 30)
-                elif y >= height - 71:
-                    self.colorLabel.move(x - self.desktopX + 20, height - 40)
-                    self.complementLabel.move(x - self.desktopX + 40, height - 40)
+                if  mouseX - self.desktopX >= width - 61 and mouseY >= height - (offsetY + self.labelHeight):
+                    self.colorLabel.move(width - 2 * self.labelWidth, height - self.labelHeight)
+                    self.complementLabel.move(width - self.labelWidth, height - self.labelHeight)
+                # right side limit
+                elif mouseX - self.desktopX >= width - 61:
+                    self.colorLabel.move(width - 2 * self.labelWidth, mouseY + offsetY)
+                    self.complementLabel.move(width - self.labelWidth, mouseY + offsetY)
+                # bottom limit
+                elif mouseY >= height - (offsetY + self.labelHeight):
+                    self.colorLabel.move(mouseX - self.desktopX + self.labelWidth, height - self.labelHeight)
+                    self.complementLabel.move(mouseX - self.desktopX + 2 * self.labelWidth, height - self.labelHeight)
                 else:
-                    self.colorLabel.move(x - self.desktopX + 20, y + 30)
-                    self.complementLabel.move(x - self.desktopX + 40, y + 30)
+                    self.colorLabel.move(mouseX - self.desktopX + self.labelWidth, mouseY + offsetY)
+                    self.complementLabel.move(mouseX - self.desktopX + 2 * self.labelWidth, mouseY + offsetY)
 
-                c = self.image.pixel(x - self.desktopX, y)
+                c = self.image.pixel(mouseX - self.desktopX, mouseY)
                 color = QColor(c)
                 complementColor = QColor(c)
                 borderColor = "#000"
                 if color.lightness() < 127:
                     borderColor = "#FFF"
+
                 hue = color.getHsl()[0]
                 if hue != - 1:
                     complementColor.setHsl(
                             hue + 180, color.getHsl()[1], color.getHsl()[2],color.getHsl()[3])
 
-                stylesheet = "background-color: {}; border-style: {}; border-color: {}; border-width:1px"
+                stylesheet = "background-color: {}; border-style: {}; border-color: {}; border-width: 1px"
                 colorBorder = "dashed none dashed dashed"
                 complementBorder = "dashed dashed dashed none"
 
-                self.colorLabel.setStyleSheet(stylesheet.format(
-                    color.name(), colorBorder, borderColor))
+                self.colorLabel.setStyleSheet(stylesheet.format(color.name(), colorBorder, borderColor))
                 self.complementLabel.setStyleSheet(stylesheet.format(
                     complementColor.name(), complementBorder, borderColor))
-                if  x - self.desktopX >= width - 52 and y >= height - 62:
+                if  mouseX - self.desktopX >= width - 61 and mouseY >= height - (offsetY + self.labelHeight):
                     transparency = "background-color:rgba({},{},{}, 75%)"
                     self.colorLabel.setStyleSheet(transparency.format(color.red(),
                         color.green(), color.blue()))
                     self.complementLabel.setStyleSheet(transparency.format(complementColor.red(),
                         complementColor.green(), complementColor.blue()))
         elif event.type() == QtCore.QEvent.MouseButtonRelease:
-            # get the color of the pixel the cursor is over
-            c = self.image.pixel( - self.desktopX  +  event.globalX(), event.globalY())
-            color = QColor(c)
+            # if mid button, exit
+            if event.button() == QtCore.Qt.MidButton:
+                sys.exit()
 
+            # get the color of the pixel the cursor is over
+            c = self.image.pixel(event.globalX() - self.desktopX , event.globalY())
+            color = QColor(c)
             hue = color.getHsl()[0]
             complementColor = QColor(c)
             if hue !=  - 1:
-                complementColor.setHsl(
-                        hue + 180, color.getHsl()[1], color.getHsl()[2],color.getHsl()[3])
+                complementColor.setHsl(hue + 180, color.getHsl()[1], color.getHsl()[2],color.getHsl()[3])
 
             # if right button, choose the complementary color
             if event.button() == QtCore.Qt.RightButton:
                 color = complementColor
-            # push to the chosen color to the clipboard
-            if event.button() == QtCore.Qt.MidButton:
-                sys.exit()
+            # push the chosen color to the clipboard
             else:
                 pyperclip.copy(color.name()[1:].upper())
                 sys.exit()
