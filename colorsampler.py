@@ -46,13 +46,42 @@ class Colorsampler(QWidget):
                 sys.exit()
         elif event.type() == QtCore.QEvent.MouseMove:
             if event.button() == QtCore.Qt.NoButton:
-                pos = event.pos()
                 width = self.image.size().width()
                 height = self.image.size().height()
                 mouseX = event.globalX()
                 mouseY = event.globalY()
                 offsetY = 30
 
+                # color acquiring time
+                c = self.image.pixel(mouseX - self.desktopX, mouseY)
+                color = QColor(c)
+                complementColor = QColor(c)
+                borderColor = "#000"
+                if color.lightness() < 127:
+                    borderColor = "#FFF"
+
+                hue = color.getHsl()[0]
+                if hue != - 1:
+                    complementColor.setHsl(hue + 180, color.getHsl()[1], color.getHsl()[2], color.getHsl()[3])
+
+                # now if that ain't stylin i just don't know what is
+                stylesheet = "background-color: {}; border-style: {}; border-color: {}; border-width: 1px"
+                colorBorder = "dashed none dashed dashed"
+                complementBorder = "dashed dashed dashed none"
+
+                self.colorLabel.setStyleSheet(stylesheet.format(color.name(), colorBorder, borderColor))
+                self.complementLabel.setStyleSheet(stylesheet.format(
+                    complementColor.name(), complementBorder, borderColor))
+                # if the cursor is ontop of the label
+                if  mouseX - self.desktopX >= width - 2* self.labelWidth and mouseY >= height - self.labelHeight:
+                    # adjust the transparency of the label, so that we can see what we're sampling
+                    transparency = "background-color:rgba({},{},{}, 75%)"
+                    self.colorLabel.setStyleSheet(transparency.format(color.red(),
+                        color.green(), color.blue()))
+                    self.complementLabel.setStyleSheet(transparency.format(complementColor.red(),
+                        complementColor.green(), complementColor.blue()))
+
+                # label moving time
                 # if cursor is in the bottom right corner
                 if  mouseX - self.desktopX >= width - 61 and mouseY >= height - (offsetY + self.labelHeight):
                     self.colorLabel.move(width - 2 * self.labelWidth, height - self.labelHeight)
@@ -68,32 +97,6 @@ class Colorsampler(QWidget):
                 else:
                     self.colorLabel.move(mouseX - self.desktopX + self.labelWidth, mouseY + offsetY)
                     self.complementLabel.move(mouseX - self.desktopX + 2 * self.labelWidth, mouseY + offsetY)
-
-                c = self.image.pixel(mouseX - self.desktopX, mouseY)
-                color = QColor(c)
-                complementColor = QColor(c)
-                borderColor = "#000"
-                if color.lightness() < 127:
-                    borderColor = "#FFF"
-
-                hue = color.getHsl()[0]
-                if hue != - 1:
-                    complementColor.setHsl(
-                            hue + 180, color.getHsl()[1], color.getHsl()[2],color.getHsl()[3])
-
-                stylesheet = "background-color: {}; border-style: {}; border-color: {}; border-width: 1px"
-                colorBorder = "dashed none dashed dashed"
-                complementBorder = "dashed dashed dashed none"
-
-                self.colorLabel.setStyleSheet(stylesheet.format(color.name(), colorBorder, borderColor))
-                self.complementLabel.setStyleSheet(stylesheet.format(
-                    complementColor.name(), complementBorder, borderColor))
-                if  mouseX - self.desktopX >= width - 61 and mouseY >= height - (offsetY + self.labelHeight):
-                    transparency = "background-color:rgba({},{},{}, 75%)"
-                    self.colorLabel.setStyleSheet(transparency.format(color.red(),
-                        color.green(), color.blue()))
-                    self.complementLabel.setStyleSheet(transparency.format(complementColor.red(),
-                        complementColor.green(), complementColor.blue()))
         elif event.type() == QtCore.QEvent.MouseButtonRelease:
             # if mid button, exit
             if event.button() == QtCore.Qt.MidButton:
@@ -110,10 +113,10 @@ class Colorsampler(QWidget):
             # if right button, choose the complementary color
             if event.button() == QtCore.Qt.RightButton:
                 color = complementColor
+
             # push the chosen color to the clipboard
-            else:
-                pyperclip.copy(color.name()[1:].upper())
-                sys.exit()
+            pyperclip.copy(color.name()[1:].upper())
+            sys.exit()
         return QMainWindow.eventFilter(self, source, event)
 
 app = QApplication(sys.argv)
