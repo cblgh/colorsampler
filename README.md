@@ -1,4 +1,4 @@
-colorsampler.py
+colorsampler
 ===============
 Hover over a color on your screen and left click to get that color's hex code in your clipboard.
 
