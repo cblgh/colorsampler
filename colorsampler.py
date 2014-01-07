@@ -107,7 +107,7 @@ class Colorsampler(QWidget):
             color = QColor(c)
             hue = color.getHsl()[0]
             complementColor = QColor(c)
-            if hue !=  - 1:
+            if hue != - 1:
                 complementColor.setHsl(hue + 180, color.getHsl()[1], color.getHsl()[2],color.getHsl()[3])
 
             # if right button, choose the complementary color
@@ -119,7 +119,11 @@ class Colorsampler(QWidget):
             sys.exit()
         return QMainWindow.eventFilter(self, source, event)
 
-app = QApplication(sys.argv)
-sampler = Colorsampler()
-app.installEventFilter(sampler)
-sys.exit(app.exec_())
+def main():
+    app = QApplication(sys.argv)
+    sampler = Colorsampler()
+    app.installEventFilter(sampler)
+    sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    main()
