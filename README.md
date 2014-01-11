@@ -1,7 +1,12 @@
 colorsampler
 ===============
-Colorsampler is an open source cross-platform (therefor it works on Windows, Linux as well as Mac) alternative to the DigitalColor Meter found on virtually all Macs.
+<p align="center">
+<img src="http://i.imgur.com/YPh4ovb.png" title="Colorsampler in action" />
+</p>
+Colorsampler is an open source cross-platform (therefor it works on Windows, Linux, as well as Mac) alternative to the DigitalColor Meter found on virtually all Macs.
 Hover over a color on your screen and left click to get that color's hex code in your clipboard.
+
+If you don't want to run the python code from source, you can utilize one of the single file executables below.
 
 
 Requirements
