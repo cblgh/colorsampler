@@ -12,14 +12,13 @@ Requirements
 
 Usage
 -----
-  
 * Left-click: sample the color you're hovering above.  
 * Right-click: sample its complementary color.  
 * Escape/Middle-mouse button: exit without sampling a color.  
 
-Extras
+Single file executables
 ------
-<a href="http://cblgh.org/colorsampler.exe">Windows executable</a>
-<a href="http://cblgh.org/colorsampler.app">Mac OSX executable</a>
+<a href="http://cblgh.org/colorsampler.exe">Windows executable</a>  
+<a href="http://cblgh.org/colorsampler.app">Mac OSX executable</a> (right-click & save as file)
 
 
