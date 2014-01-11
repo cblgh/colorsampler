@@ -19,6 +19,7 @@ Usage
 
 Extras
 ------
-<a href="http://cblgh.org/colorsampler.exe">Windows binary</a>
+<a href="http://cblgh.org/colorsampler.exe">Windows executable</a>
+<a href="http://cblgh.org/colorsampler.app">Mac OSX executable</a>
 
 
