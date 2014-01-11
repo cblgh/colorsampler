@@ -19,6 +19,6 @@ Usage
 Single file executables
 ------
 <a href="http://cblgh.org/colorsampler.exe">Windows executable</a>  
-<a href="http://cblgh.org/colorsampler.app">Mac OSX executable</a> (right-click & save as file)
+<a href="http://cblgh.org/colorsampler.app.zip">Mac OSX executable</a>
 
 
